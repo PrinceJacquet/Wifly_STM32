@@ -1,0 +1,62 @@
+/*  do{
+	  HAL_UART_Transmit_IT(&huart1, (uint8_t *)CMD_MODE, strlen(CMD_MODE));
+	  HAL_UART_Receive(&huart1, (uint8_t *)ok, MAX_CMD_LEN, 5000);
+  }while (strstr((char *) ok, "CMD")==NULL);
+*/
+
+  /*
+  	// ssid
+  	sprintf((char *)cmd,"set wlan ssid %s\r",SSID);
+  	do {
+  		HAL_Delay(250);
+  		HAL_UART_Transmit_IT(&huart1, cmd,strlen(SSID)+strlen("set wlan ssid  \r"));
+  		HAL_UART_Receive(&huart1, (uint8_t *)ok, MAX_CMD_LEN, 5000);
+  	} while (strstr((char *) ok, "AOK")==NULL);
+
+  */
+
+  /*
+  	// get ssid
+  	sprintf((char *)cmd,"get w\r");
+  		HAL_Delay(250);
+  		HAL_UART_Transmit_IT(&huart1, cmd,25);
+  		HAL_UART_Receive(&huart1, (uint8_t *)ok, MAX_CMD_LEN, UART_WAIT_TIME);
+
+  */
+
+    /*
+  	//auth
+  	sprintf((char *)cmd,"set w a %d\n", AUTH);
+  	do{
+  			HAL_Delay(250);
+  			HAL_UART_Transmit_IT(&huart1, cmd, MAX_CMD_LEN);
+  			HAL_UART_Receive(&huart1, (uint8_t *)ok, MAX_CMD_LEN, UART_WAIT_TIME);
+  		} while (strstr((char *) ok, "AOK")==NULL);
+
+  */
+
+    /*
+  	//join
+
+  	sprintf((char *)cmd,"join %s\r",SSID);
+  	do{
+  				HAL_Delay(250);
+  				HAL_UART_Transmit_IT(&huart1, cmd, MAX_CMD_LEN);
+  				HAL_UART_Receive(&huart1, (uint8_t *)ok, MAX_CMD_LEN,UART_WAIT_TIME);
+  		} while (strstr((char *) ok, "Associated")==NULL);
+
+
+
+  */
+    
+    /*
+    	//save conf
+
+    	sprintf((char *)cmd,"save\r");
+    	do{
+    				HAL_Delay(250);
+    				HAL_UART_Transmit_IT(&huart1, cmd, MAX_CMD_LEN);
+    				HAL_UART_Receive(&huart1, (uint8_t *)ok, MAX_CMD_LEN, UART_WAIT_TIME);
+    		} while (strstr((char *) ok, "Storing in config")==NULL);
+
+    */

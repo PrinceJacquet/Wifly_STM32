@@ -1,0 +1,3 @@
+wifly_lib.c:34:6:commandMode	24	static
+wifly_lib.c:53:6:sendCommand	32	static
+wifly_lib.c:89:6:sendData	32	static
