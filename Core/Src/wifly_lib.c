@@ -27,6 +27,8 @@
  *********************************************************************************/
 
 #include "wifly_lib.h"
+#include <string.h>
+#include <stdio.h>
 #include "usart.h"
 
 
@@ -50,7 +52,7 @@ void commandMode()
 
 
 //void sendCommand(char * CMD, char * ACK,uint8_t timeout , uint8_t * ANS)
-void sendCommand(char * CMD, char * ACK, uint8_t * ANS)
+void sendCommand(char * CMD, char * ACK, int * ANS)
 {
 	int i =0;
 	int k = 0;
@@ -78,7 +80,7 @@ void sendCommand(char * CMD, char * ACK, uint8_t * ANS)
 	 		 HAL_Delay(200);
 
 	 		 HAL_UART_Transmit_IT(&huart1,  (uint8_t *)CMD, strlen(CMD));
-	 		 HAL_UART_Receive(&huart1,  ANS, MAX_RCP_LEN, DEFAULT_WAIT_RESPONSE_TIME*k);
+	 		 HAL_UART_Receive(&huart1,  (uint8_t *)ANS, MAX_RCP_LEN, DEFAULT_WAIT_RESPONSE_TIME*k);
 
 	 		 HAL_UART_Transmit_IT(&huart2,  (uint8_t *)CMD, strlen(CMD)+1);
 
@@ -86,7 +88,7 @@ void sendCommand(char * CMD, char * ACK, uint8_t * ANS)
 
  }
 
-void sendData(char * DATA, char * ACK, uint8_t * ANS)
+void sendData(char * DATA, char * ACK, int * ANS)
 {
 	int i =0;
 
@@ -106,11 +108,120 @@ void sendData(char * DATA, char * ACK, uint8_t * ANS)
 	 		i++;
 	 		HAL_Delay(200);
 
-	 		 HAL_UART_Transmit_IT(&huart1,  (uint8_t *)DATA, strlen(DATA)+1);
-	 		 HAL_UART_Receive(&huart1,  ANS, MAX_RCP_LEN, DEFAULT_WAIT_RESPONSE_TIME*3);
+	 		 HAL_UART_Transmit_IT(&huart1,  (uint8_t *)DATA, strlen(DATA));
+	 		 HAL_UART_Receive(&huart1,  (uint8_t *)ANS, MAX_RCP_LEN, DEFAULT_WAIT_RESPONSE_TIME*3);
 
-	 		 HAL_UART_Transmit_IT(&huart2,  (uint8_t *)DATA, strlen(DATA)+1);
+	 		 HAL_UART_Transmit_IT(&huart2,  (uint8_t *)ANS, strlen((char *)ANS));
 
 	 	 }while (strstr(( char *)ANS, ACK)==NULL && i <5);
 
  }
+
+void WIFI_authentification(char * SSID, char * AUTH, char * KEY)
+{
+
+	char CMD[100] = "GET /ShowData?id=10";
+	int ok[100];
+	snprintf(CMD,100,"set wlan ssid %s\r",SSID);
+
+	sendCommand(CMD, "OK",ok);
+	  if (strcmp(AUTH , WIFLY_AUTH_OPEN) > 0 || strcmp(AUTH , WIFLY_AUTH_OPEN) < 0 )
+	    {
+		  snprintf(CMD,100,"set wlan auth %s\r",AUTH);
+		  sendCommand(CMD,"OK", ok);
+	  	  if (strcmp(AUTH , WIFLY_AUTH_WEP)==0)
+	  	  {
+	  		snprintf(CMD,100,"set wlan key %s\r",KEY);
+	  		sendCommand(CMD,"OK", ok); // Key must be EXACTLY 13 bytes (26 ASCII chars)
+	  	  }
+	  	  else{
+	  		snprintf(CMD,100,"set wlan phrase %s\r",KEY);
+	  		sendCommand(CMD,"OK", ok);
+
+	  	  }
+	    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+
+ //HAL_Delay(500);
+  //commandMode();
+
+
+  //sendCommand("join\r","Associated!",ok);
+
+//sendCommand("factory R\r", "Defaults",ok);
+
+     //sendCommand("get wlan", "AOK",ok);
+
+
+    //sendCommand("get wlan\r", SSID,ok);
+   //sendCommand("exit\r", "EXIT", ok);
+ //sendCommand("show  net\r", "Assoc=OK",ok);
+
+
+ //sendCommand("get everything", "AOK",ok);
+ //sendCommand("set wlan join 1","OK",ok);
+//sendCommand("set sys auto 10\r","AOK",ok);
+
+
+// sendCommand("get ip\r","IP=",ok);
+//sscanf(strstr(( char *)ok, "IP=")+3,"%d.%d.%d.%d:%d", &ip[0], &ip[1], &ip[2], &ip[3], &port );
+//sscanf(strstr(( char *)ok, "IP=")+3,"%d.%d.%d.%d:%d", (int *)&ip[0],(int *)&ip[1],(int *)&ip[2],(int *)&ip[3], (int *)&port );
+
+
+// sendCommand("exit\r", "EXIT", ok);
+
+//sendCommand("save\r", "Storing in config",ok);
+//sendCommand("reboot\r", "AOK", ok);
+
+*/

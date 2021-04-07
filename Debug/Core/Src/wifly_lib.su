@@ -1,3 +1,4 @@
-wifly_lib.c:34:6:commandMode	24	static
-wifly_lib.c:53:6:sendCommand	32	static
-wifly_lib.c:89:6:sendData	32	static
+wifly_lib.c:36:6:commandMode	24	static
+wifly_lib.c:55:6:sendCommand	32	static
+wifly_lib.c:91:6:sendData	32	static
+wifly_lib.c:120:6:WIFI_authentification	536	static

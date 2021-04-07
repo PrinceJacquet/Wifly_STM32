@@ -35,13 +35,13 @@
 	WIFLY_AUTH_WPA2_PSK    4    // WPA2-PSK
 	WIFLY_AUTH_ADHOC       6    // Ad-hoc, join any Ad-hoc network
 */
-#define SSID	"touftoufe"
-#define KEY		"0123456.."
+#define SSID	"Galaxy-S8"
+#define KEY		"123456789"
 #define AUTH	WIFLY_AUTH_WPA2_PSK
 
 #define URL		"httpbin.org"//"api.openweathermap.org" //"e40810fd255dcc.localhost.run"
 
-#define HOST_IP "192.168.43.47"
+#define HOST_IP "192.168.43.48"
 #define HOST_PORT "4010"
 #define STD_PORT "80"
 /* USER CODE END Includes */
@@ -115,7 +115,10 @@ int main(void)
 
 
   int ok[MAX_RCP_LEN ] = {0};
-
+  char GET_DATA_Send[100] = "GET /ShowData?id=10";
+  //char path = "/ShowData?";
+  int  id = 10, temp = 2000, humA = 4560, humS = 6700 , Waterlvl = 5000;
+  int reboot = 0, i =0;
 
 
 
@@ -127,70 +130,64 @@ int main(void)
 
   commandMode();
 
-  //sendCommand("factory R\r", "Defaults",ok);
-
-  //sendCommand("get wlan", "AOK",ok);
 
 
-  sendCommand("set wlan ssid " SSID "\r", "OK",ok);
-  if (strcmp(AUTH , WIFLY_AUTH_OPEN) > 0 || strcmp(AUTH , WIFLY_AUTH_OPEN) < 0 )
-    {
-	  sendCommand("set wlan auth " AUTH "\r","OK", ok);
-  	  if (strcmp(AUTH , WIFLY_AUTH_WEP)==0)
-  	  {
-  		  sendCommand("set wlan key " KEY "\r", "OK",ok); // Key must be EXACTLY 13 bytes (26 ASCII chars)
-  	  }
-  	  else{
-  		  sendCommand("set wlan phrase " KEY "\r", "OK",ok);
-  	  }
-    }
-
-  //sendCommand("get wlan\r", SSID,ok);
-  sendCommand("join " SSID "\r", "Associated!",ok);
-
-  sendCommand("save\r", "Storing in config",ok);
-  sendCommand("reboot\r", "*READY*", ok);
-  //sendCommand("exit\r", "EXIT", ok);
-  HAL_Delay(500);
-  commandMode();
+  /* -----  WIFI_authentification(SSID,AUTH,KEY);  ----- */
 
 
-  sendCommand("join\r","Associated!",ok);
+	sendCommand("set wlan ssid " SSID "\r", "OK",ok);
+	  if (strcmp(AUTH , WIFLY_AUTH_OPEN) > 0 || strcmp(AUTH , WIFLY_AUTH_OPEN) < 0 )
+	    {
+		  sendCommand("set wlan auth " AUTH "\r","OK", ok);
+	  	  if (strcmp(AUTH , WIFLY_AUTH_WEP)==0)
+	  	  {
+	  		sendCommand("set wlan key " KEY "\r","OK", ok); // Key must be EXACTLY 13 bytes (26 ASCII chars)
+	  	  }
+	  	  else{
+	  		sendCommand("set wlan phrase " KEY"\r","OK", ok);
 
-  //sendCommand("show  net\r", "Assoc=OK",ok);
+	  	  }
+	    }
 
 
-  //sendCommand("get everything", "AOK",ok);
-  //sendCommand("set wlan join 1","OK",ok);
+
+
+   /* -----  Connect to server ----- */
 
   sendCommand("set ip protocol 18\r","OK",ok); //enable html client
-  //sendCommand("set ip host " HOST_IP"\r","OK",ok); //set remote IP to connect to
-  sendCommand("set ip address 0\r","OK",ok);// so WiFly will use DNS
-  sendCommand("set ip remote "STD_PORT"\r","OK",ok); //set remote Port to connect to
-  sendCommand("set dns name " URL"\r", "AOK", ok);
-
   sendCommand("set com remote 0\r","OK",ok); // turn off the REMOTE string so it does not interfere with the post
+
+
+  sendCommand("set ip host " HOST_IP"\r","OK",ok); //set remote IP to connect to
+  sendCommand("set ip remote "HOST_PORT"\r","OK",ok); //set remote Port to connect to
+
+  //sendCommand("set ip address 0\r","OK",ok);// so WiFly will use DNS (when of need of DNS)
+  //sendCommand("set dns name " URL"\r", "AOK", ok);
+
+
+
   //sendCommand("set comm open *OPEN*\r","OK",ok); // set the string that the wifi shield will output when a connection is opened
 
   //sendCommand("open " HOST_IP " " HOST_PORT"\r","*OPEN*",ok);
-  sendCommand("open\r","*OPEN*",ok);
-  //sendCommand("set uart mode 2\r","AOK",ok);
-  //sendCommand("exit\r", "EXIT", ok);
+  //sendCommand("open\r","*OPEN*",ok); // One time opening of connection to server
 
-  //sendCommand("set sys auto 10\r","AOK",ok);
+  sendCommand("set uart mode 2\r","AOK",ok); //auto connect on every UART message
 
+  /* -----  Save wlan config ----- */
 
- // sendCommand("get ip\r","IP=",ok);
-  //sscanf(strstr(( char *)ok, "IP=")+3,"%d.%d.%d.%d:%d", &ip[0], &ip[1], &ip[2], &ip[3], &port );
-  //sscanf(strstr(( char *)ok, "IP=")+3,"%d.%d.%d.%d:%d", (int *)&ip[0],(int *)&ip[1],(int *)&ip[2],(int *)&ip[3], (int *)&port );
+  sendCommand("save\r", "Storing in config",ok);
+  sendCommand("reboot\r", "*READY*", ok); //After reboot we directly go to dataMode
 
+ /*
 
-  // sendCommand("exit\r", "EXIT", ok);
+   /* -----  Join access point ----- //
+    HAL_Delay(1000);
+    commandMode();
+    sendCommand("join " SSID "\r", "Associated!",ok);
 
-  //sendCommand("save\r", "Storing in config",ok);
-  //sendCommand("reboot\r", "AOK", ok);
+  sendCommand("exit\r", "EXIT", ok); // go into DATA mode (mode in which we can communicate with the network/http)
 
-
+ */
 
 
 
@@ -201,10 +198,61 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
 
-	  sendData("GET /get \n\n","AOK", ok);
+	  /*-----  Join access point -----*/
 
-	  //sendData("GET /ShowData?id=555 \n\n","AOK", ok);
-	  //sendData("GET /data/2.5/weather?q=San%20Francisco,US \n\n","AOK", ok);
+	  HAL_Delay(1000);
+	  commandMode();
+	  sendCommand("show  net\r", "Assoc=OK",ok);
+	  if (strstr(ok,"Assoc=OK")==NULL)
+	  {
+		  sendCommand("join\r","Associated!",ok);
+	  }
+	  sendCommand("exit\r","EXIT", ok);
+
+
+
+	  /* Code Capteurs */
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	  /* Send measures to server */
+
+	  snprintf(GET_DATA_Send,100,"GET %sid=%d&temp=%d&huma=%d&hums=%d&wtrlvl=%d","/ShowData?",id + i,temp,humA,humS,Waterlvl);
+	  sendData(GET_DATA_Send,"*OPEN*", ok);
+	  i++;
+
+	  /* test Failure and reboot Wifi Module*/
+	  if( strstr((char *)ok,"ERR") != NULL ||  strcmp((char *)ok,"") == 0 )
+	  {
+		  reboot ++;
+		  if(reboot >= 2)
+		  {
+			  reboot = 0;
+			  commandMode();
+			  sendCommand("reboot\r", "*READY*", ok);
+		  }
+
+	  }
+
+
+
+
+
 	  HAL_Delay(5000);
 
 

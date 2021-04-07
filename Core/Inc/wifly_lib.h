@@ -48,12 +48,13 @@
 
 
 
-#include <string.h>
-#include <stdio.h>
+
 
 
 void commandMode(void);
-void sendCommand(char * CMD, char * ACK, uint8_t * ANS);
+void sendCommand(char * CMD, char * ACK, int * ANS);
+void sendData(char * DATA, char * ACK, int * ANS);
+void WIFI_authentification(char * SSID, char * AUTH, char * KEY);
 
 
 #endif /* INC_WIFLY_LIB_H_ */
